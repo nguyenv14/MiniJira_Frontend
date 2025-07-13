@@ -1,0 +1,268 @@
+@import 'tailwindcss';
+@import 'primeicons/primeicons.css';
+
+
+:root {
+  /* Config primevue color */
+  --p-primary-color: var(--color-primary);
+  --p-button-size: 14px;
+  --p-select-color: var(--color-dark-900);
+  --p-inputtext-color: var(--color-dark-900);
+  --p-select-placeholder-color: var(--color-placeholder);
+  --p-paginator-padding: 0;
+  --p-paginator-color: var(--color-dark-900);
+  --p-paginator-nav-button-color: var(--color-dark-900);
+  --p-paginator-current-page-report-color: var(--color-dark-900);
+  --p-paginator-nav-button-width: 16px;
+  --p-paginator-nav-button-height: 16px;
+  --p-select-dropdown-width: 32px;
+  --p-multiselect-placeholder-color: var(--color-placeholder);
+  --p-iconfield-icon-color: var(--color-dark-500);
+  --p-stepper-step-title-color: var(--color-dark-500);
+  --p-stepper-step-title-active-color: var(--color-primary);
+  --p-stepper-step-number-active-background: var(--color-primary);
+  --p-stepper-step-number-active-color: #fff;
+  --p-stepper-step-number-active-border-color: var(--color-primary);
+  --p-stepper-step-number-font-size: 14px;
+  --p-stepper-step-number-font-weight: 400;
+  --p-stepper-step-number-border-color: var(--color-dark-100);
+  --p-stepper-separator-background: var(--color-dark-100);
+  --p-stepper-step-number-color: var(--color-dark-900);
+  --p-select-disabled-background: var(--color-dark-20);
+  --p-checkbox-checked-hover-background: var(--color-primary);
+  --p-checkbox-checked-hover-border-color: var(--color-primary);
+  --p-checkbox-background: #fff;
+  --p-button-secondary-focus-ring-color: transparent;
+  --p-checkbox-width: 18px;
+  --p-checkbox-height: 18px;
+  --p-inputtext-disabled-background: var(--color-dark-20);
+  --p-checkbox-border-color: var(--color-dark-100);
+  --p-dialog-content-padding: 0 1.25rem .75rem 1.25rem;
+  --p-dialog-footer-padding: .75rem 1.25rem 1.25rem 1.25rem;
+  --cell-editing-background: #f4fbff;
+  --cell-error-background: #fad6cb;
+  --p-toggleswitch-checked-hover-background: var(--color-primary-350);
+  --p-inputtext-disabled-color:var(--color-dark-100);
+  --p-select-invalid-placeholder-color: var(--color-placeholder);
+  --p-multiselect-invalid-placeholder-color: var(--color-placeholder);
+}
+
+@theme {
+  --layout-bg: #f0f5f9;
+
+  --color-primary: #F4F9FF; /*#3587DC*/
+  --color-primary-50: #ebf3fc;
+  --color-primary-100: #8AB9EB;
+  --color-primary-200: oklch(0.901 0.058 230.902);
+  --color-primary-300: #3587dc;
+  --color-primary-350: #579BE2;
+  --color-primary-400: #255f9a;
+  --color-primary-500: #205286;
+  --color-primary-999: #F4F9FF;
+
+  --color-blue-100: #D8E8F8;
+  --color-blue-200: #A6CBF0;
+  --color-blue-300: #0085DB;
+
+  --color-dark-20: #F6F6F7;
+  --color-dark-30: #ECEDEE;
+  --color-dark-40: #e0e1e4;
+  --color-dark-50: #C4C6CB;
+  --color-dark-100: #80848E;
+  --color-dark-500: #49505d;
+  --color-dark-800: #D9D9D9;
+  --color-dark-900: #131c2d;
+
+  --color-info: #46caeb;
+
+  --color-warning: #f8c076;
+  --color-warning-1: #F9CB8D;
+  --color-warning-50: #FEF9F1;
+
+  --color-success: #4bd08b;
+  --color-success-50: #EDFAF3;
+  --color-success-100: #97E4BC;
+  --color-success-300: #4BD08B;
+  --color-success-400: #359261;
+  --color-success-999: #6AD89F;
+
+  --color-error: #e6273e;
+  --color-error-50: #FDE9EC;
+  --color-error-600: #FF7575;
+  --color-error-800: #FF3737;
+  --color-error-999: #fde4e6;
+
+  --color-placeholder: #c4c6cb;
+  --color-disabled: #ecedee;
+
+  --color-grey-100: #7e848e;
+
+  --color-secondary: oklch(0.871 0.006 286.286);
+  --color-secondary-50: oklch(0.985 0 0);
+  --color-secondary-200: oklch(0.922 0 0);
+
+  --color-danger: #FCA993;
+  --color-danger-300: #FB977D;
+
+  --font-sans: 'Plus Jakarta Sans';
+
+  --radius-common: 10px;
+  --bp-tablet: 1024px;
+}
+
+/* Add custom class tailwind */
+@utility button-primary {
+  @apply bg-primary hover:bg-primary-200 border-none text-white disabled:bg-primary-300 disabled:cursor-not-allowed;
+}
+
+@utility button-secondary {
+  @apply bg-secondary hover:bg-secondary-200 border-none text-black;
+}
+
+@utility bg-nav-hover {
+  background-color: #ebf3fc;
+}
+@utility all-200-eio {
+  transition: all 0.2s ease-in-out;
+}
+@utility layout-default-close {
+  width: calc(100% - 108px);
+  @media screen and (max-width: 1024px) {
+    width: 100%;
+  }
+}
+
+body {
+  @apply text-dark-900 text-sm/4.5;
+}
+
+.p-toast-message-text {
+  gap: 0;
+}
+.p-floatlabel label {
+  color: var(--color-placeholder);
+}
+.p-inputtext {
+  @apply text-sm/4.5;
+}
+
+.p-floatlabel:has(input:focus) label,
+.p-floatlabel:has(input:-webkit-autofill) label,
+.p-floatlabel:has(textarea:focus) label,
+.p-floatlabel:has(.p-inputwrapper-focus) label {
+  color: #80848e;
+}
+.p-select:has(.p-select-clear-icon) .p-select-label {
+  padding-inline-end: 1.25rem;
+}
+::placeholder {
+  color: var(--color-placeholder);
+}
+.ag-header-cell,
+.ag-header-group-cell,
+.ag-cell {
+  padding-left: 10px !important;
+  padding-right: 10px !important;
+}
+
+[class*='ag-theme-'] {
+  font-family: 'Plus Jakarta Sans' !important;
+  font-size: 14px !important;
+  color: #131c2d !important;
+}
+.inputicon--error {
+  top: 19px;
+}
+.p-floatlabel input::placeholder,
+.p-floatlabel .p-placeholder {
+  opacity: 0;
+}
+.p-floatlabel input:focus::placeholder,
+.p-floatlabel > .p-select.p-select-open > .p-placeholder,
+.p-floatlabel > .p-multiselect.p-multiselect-open > .p-placeholder {
+  opacity: 1;
+}
+.p-floatlabel:has(input:focus) .p-placeholder,
+.p-floatlabel:has(input:-webkit-autofill) .p-placeholder,
+.p-floatlabel:has(textarea:focus) .p-placeholder,
+.p-floatlabel:has(.p-inputwrapper-focus) .p-placeholder {
+  opacity: 1;
+}
+.p-step-number {
+  border-width: 1px;
+}
+
+.p-radiobutton-checked .p-radiobutton-box .p-radiobutton-icon {
+  width: 16px;
+  height: 16px;
+  border: 3px solid white;
+  background-color: var(--color-primary);
+}
+
+.p-radiobutton-checked:not(.p-disabled):has(.p-radiobutton-input:hover) .p-radiobutton-box{
+  border-color: var(--p-radiobutton-checked-border-color);
+  background: var(--p-radiobutton-checked-background);
+}
+
+.font-12 .p-message-text {
+  font-size: 12px !important;
+}
+.order-schedule input {
+  border-color: transparent;
+}
+.order-schedule input:enabled:focus {
+  border-color: var(--color-primary);
+}
+.order-schedule input::placeholder {
+  color: var(--color-dark-900);
+}
+.p-checkbox-box {
+  border-width: 2px;
+}
+.p-select-option, .p-multiselect-option {
+  max-width: 500px;
+  white-space: normal;
+  word-break: break-all;
+}
+.layout-no-scroll-no-height {
+  .ag-center-cols-viewport {
+    min-height: 0 !important;
+  }
+}
+.row-error {
+  background-color: var(--color-error-50);
+  .p-inputtext {
+    background-color: var(--color-error-50);
+  }
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-dark-100);
+  border-radius: 6px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-dark-100);
+}
+
+::-webkit-scrollbar-track {
+  background: #f5f6f7;
+  border-radius: 6px;
+}
+
+@media screen and (max-width: 1024px) {
+  .p-step-title {
+    max-width: 126px;
+    white-space: pre-line;
+    text-align: left;
+  }
+}
+
+.break-text {
+  word-break: break-word;
+}

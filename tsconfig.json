@@ -1,0 +1,24 @@
+{
+  // https://nuxt.com/docs/guide/concepts/typescript
+  "extends": "./.nuxt/tsconfig.json",
+  "compilerOptions": {
+    "types": ["@types/node", "nuxt"],
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./*"],
+      "@components/*": ["./components/*"],
+      "@layouts/*": ["./layouts/*"],
+      "@pages/*": ["./pages/*"],
+      "@plugins/*": ["./plugins/*"],
+      "@store/*": ["./store/*"],
+      "@assets/*": ["./assets/*"],
+      "@utils/*": ["./utils/*"],
+      "@composables/*": ["./composables/*"],
+      "@middleware/*": ["./middleware/*"],
+      "@types/*": ["./types/*"],
+      "@nuxt/*": ["./node_modules/@nuxt/*"],
+      "@nuxtjs/*": ["./node_modules/@nuxtjs/*"],
+      "@primevue/*": ["./node_modules/@primevue/*"]
+    }
+  }
+}
