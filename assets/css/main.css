@@ -1,6 +1,30 @@
 @import 'tailwindcss';
 @import 'primeicons/primeicons.css';
 
+/* Trong file theme.css hoặc style toàn cục */
+.p-radiobutton .p-radiobutton-box {
+  border-color: var(--color-primary);
+}
+
+.p-radiobutton .p-radiobutton-box.p-highlight {
+  background-color: var(--color-primary);
+  border-color: var(--color-primary);
+}
+
+.p-radiobutton .p-radiobutton-box .p-radiobutton-icon {
+  color: white;
+}
+body{
+background-color: var(--color-sky-50); 
+}
+
+.bg-sky {
+  background-color: var(--color-primary);
+}
+
+.text-sky {
+  color: var(--color-primary);
+}
 
 :root {
   /* Config primevue color */
@@ -50,7 +74,7 @@
 @theme {
   --layout-bg: #f0f5f9;
 
-  --color-primary: #F4F9FF; /*#3587DC*/
+  --color-primary: #0EA5E9; /*#3587DC*/
   --color-primary-50: #ebf3fc;
   --color-primary-100: #8AB9EB;
   --color-primary-200: oklch(0.901 0.058 230.902);
