@@ -15,7 +15,7 @@
       "@utils/*": ["./utils/*"],
       "@composables/*": ["./composables/*"],
       "@middleware/*": ["./middleware/*"],
-      "@types/*": ["./types/*"],
+      "@types/*": ["constants/*"],
       "@nuxt/*": ["./node_modules/@nuxt/*"],
       "@nuxtjs/*": ["./node_modules/@nuxtjs/*"],
       "@primevue/*": ["./node_modules/@primevue/*"]

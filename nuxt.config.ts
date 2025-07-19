@@ -2,22 +2,28 @@
 import tailwindcss from "@tailwindcss/vite";
 import Aura from "@primeuix/themes/aura";
 
-export default defineNuxtConfig( {
+export default defineNuxtConfig({
   components: true,
   compatibilityDate: "2025-05-15",
   devtools: { enabled: true },
-  vite: {
-    plugins: [tailwindcss(), ],
+  runtimeConfig: {
+    public: {
+      appName: process.env.APP_NAME || "MiniJira",
+      appBaseUrl: process.env.APP_BASE_URL || "http://localhost:3000",
+      apiBaseUrl: process.env.API_BASE_URL || "http://localhost:8000/api",
+    },
   },
-  css: [
-    '~/assets/css/main.css',
-  ],
+  vite: {
+    plugins: [tailwindcss()],
+  },
+  css: ["~/assets/css/main.css"],
   modules: [
     "@nuxt/eslint",
     "@nuxt/fonts",
     "@nuxt/icon",
     "@nuxt/image",
     "@primevue/nuxt-module",
+    '@pinia/nuxt',
   ],
   primevue: {
     options: {
@@ -33,5 +39,4 @@ export default defineNuxtConfig( {
       },
     },
   },
-  
 });

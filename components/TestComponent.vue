@@ -7,6 +7,6 @@ const increment = () => {
 
 <template>
   <div>
-    <Button :label="`Count: ${count}`" @click="increment" class="p-button-raised" />
+    <Button class="p-button-raised" :label="`Count: ${count}`" @click="increment" />
   </div>
 </template>
