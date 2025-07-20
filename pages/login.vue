@@ -20,12 +20,12 @@
             class="w-full pb-5"
           />
           <InputPasswordComponent
-            v-bind="$attrs"
             v-model="passwordInput.modelValue"
             :label="passwordInput.label"
             :error-message="passwordInput.errorMessage"
             :input-class="passwordInput.inputClass"
             :input-id="passwordInput.inputId"
+            :is-required="true"
             class="w-full pb-3"
           />
           <div class="w-full pb-5 flex justify-end">
@@ -126,7 +126,13 @@ const submitLogin = async () => {
         return;
       }
     } catch (error) {
-      console.error("Login failed:", error);
+      console.log(error);
+      toast.add({
+        severity: "error",
+        summary: "Login Failed",
+        detail: error.message,
+        life: 3000,
+      });
     }
   }
 };

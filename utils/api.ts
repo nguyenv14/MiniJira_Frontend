@@ -11,6 +11,7 @@ export const getApiRoutes = () => {
     },
     profile: {
       getProfile: (id: string | number) => `${base}/profile/${id}`,
+      changePassword: (id: string|number ) => `${base}/profile/${id}/change-password`
     }
   }
 }

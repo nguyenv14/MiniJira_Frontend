@@ -32,11 +32,18 @@
         </div>
       </div>
 
-      <div class="mt-3">
+      <div class="mt-5">
         <Button severity="info" label="Save" @click="updateProfile" />
-        <Button class="ml-3" variant="outlined" severity="info" label="Change Password" />
+        <Button
+          class="ml-3"
+          variant="outlined"
+          severity="info"
+          label="Change Password"
+          @click="openChangePasswordDialog"
+        />
       </div>
     </div>
+    <DialogChangePassword  ref="changePasswordDialogRef" />
   </div>
 </template>
 
@@ -48,6 +55,12 @@ import { Roles, getRoleDescription } from "@/constants/Role";
 import { useRequest } from "@/utils/base-request";
 import { getApiRoutes } from "@/utils/api";
 import LoadingComponent from "@/components/LoadingComponent.vue";
+import DialogChangePassword from "@/components/profile/DialogChangePassword.vue";
+
+const changePasswordDialogRef = ref();
+function openChangePasswordDialog() {
+  changePasswordDialogRef.value?.open();
+}
 
 const authStore = useAuthStore();
 const apiRoute = getApiRoutes();
