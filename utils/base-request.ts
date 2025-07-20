@@ -45,15 +45,12 @@ export const useRequest = async <
       method: options.method,
       body: options.body,
       headers,
-      onResponseError({ response }) {
-        // Bạn có thể log ra hoặc không làm gì
-        console.log('Custom error:', response.status)
-      }
     })
   } catch (error: any) {
     // Nuxt 3 $fetch error thường có response body trong error.data
-    if (error?.response?.status === 400 || error?.status === 400) {
-      return error.error // hoặc error.response._d
+    console.log(error);
+    if (error?.response?.status === 400 || error?.status === 422) {
+      return error.data || { message: error.message || 'Something went wrong', statusCode: 400 }
     }
 
     throw error
