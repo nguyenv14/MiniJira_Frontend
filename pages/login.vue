@@ -126,7 +126,6 @@ const submitLogin = async () => {
         return;
       }
     } catch (error) {
-      console.log(error);
       toast.add({
         severity: "error",
         summary: "Login Failed",
