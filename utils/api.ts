@@ -11,6 +11,11 @@ export const getApiRoutes = () => {
     },
     profile: {
       getProfile: (id: string | number) => `${base}/profile/${id}`,
+      changePassword: (id: string | number) => `${base}/profile/${id}/change-password`
+    },
+    user: {
+      search: `${base}/users`,
+      user: (id: string | number) => `${base}/users/${id}`
     }
   }
 }

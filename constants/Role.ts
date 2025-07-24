@@ -7,12 +7,12 @@ export enum Roles {
 export function getRoleDescription(role: Roles): string {
   switch (role) {
     case Roles.ADMIN:
-      return 'Quản trị viên';
+      return 'Admin';
     case Roles.LEADER:
-      return 'Trưởng nhóm';
+      return 'Leader';
     case Roles.MEMBER:
-      return 'Thành viên';
+      return 'Member';
     default:
-      return 'Không xác định';
+      return 'Default';
   }
 }

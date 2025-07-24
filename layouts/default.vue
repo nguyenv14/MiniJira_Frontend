@@ -138,7 +138,6 @@ onMounted(async () => {
   }
   authStore.fetchAndSaveProfile();
   authStore.loadFromStorage();
-  userName.value = authStore.userInfo?.username as string;
 });
 
 onUnmounted(() => {
