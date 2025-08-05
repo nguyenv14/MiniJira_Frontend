@@ -10,12 +10,22 @@ export const getApiRoutes = () => {
       register: `${base}/auth/register`,
     },
     profile: {
-      getProfile: (id: string | number) => `${base}/profile/${id}`,
+      getProfile: `${base}/profile`,
       changePassword: (id: string | number) => `${base}/profile/${id}/change-password`
     },
     user: {
       search: `${base}/users`,
-      user: (id: string | number) => `${base}/users/${id}`
+      user: (id: string | number) => `${base}/users/${id}`,
+      getUserToAddProject: `${base}/users/get-user-to-add-project`,
+    },
+    project: {
+      search: `${base}/projects`,
+      project: `${base}/projects/create`,
+      detail: `${base}/projects/detail`,
+      findByMember: `${base}/projects/get-members-by-project-id`,
+      addMember: `${base}/projects/add-member`,
+      removeMember: `${base}/projects/remove-member`,
+      updateMemberRole: `${base}/projects/change-role-member`,
     }
   }
 }

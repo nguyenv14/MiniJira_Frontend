@@ -1,5 +1,5 @@
 import { useAuthStore } from '@/stores/auth'
-export default defineNuxtPlugin((nuxtApp) => {
+export default defineNuxtPlugin(() => {
   const authStore = useAuthStore()
   authStore.loadFromStorage()
 })
