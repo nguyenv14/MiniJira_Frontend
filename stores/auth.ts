@@ -7,7 +7,7 @@ export const useAuthStore = defineStore('auth', {
   state: () => ({
     accessToken: null as string | null,
     userInfo: null as {
-      id: string
+      _id: string
       username: string
       email: string
       role: number
@@ -22,14 +22,13 @@ export const useAuthStore = defineStore('auth', {
 
   actions: {
     login(token: string, userInfo: {
-      id: string
+      _id: string
       username: string
       email: string
       role: number
       isActive: boolean
       isAdmin: boolean
     }) {
-      console.log('Đăng nhập với:', { token, userInfo })
       this.accessToken = token
       this.userInfo = userInfo
       if (typeof window !== 'undefined') {
@@ -77,10 +76,9 @@ export const useAuthStore = defineStore('auth', {
 
     async fetchAndSaveProfile() {
       try {
-        if (!this.userInfo?.id) throw new Error('Không có user id')
-        const api = getApiRoutes(); // ✅ Gọi bên trong hàm
+        const api = getApiRoutes();
         const response = await useRequest(
-          api.profile.getProfile(this.userInfo.id),
+          api.profile.getProfile,
           {
             method: 'GET',
             auth: true,
@@ -88,13 +86,10 @@ export const useAuthStore = defineStore('auth', {
         )
         if (response.statusCode === 200) {
           this.userInfo = response.data
-          if (typeof window !== 'undefined') {
-            localStorage.setItem('userInfo', JSON.stringify(this.userInfo))
-          }
+          localStorage.setItem('userInfo', JSON.stringify(this.userInfo))
         } else {
           this.logout()
           return navigateTo("/login");
-
         }
       } catch (error) {
         console.error('Lỗi fetchAndSaveProfile:', error)
