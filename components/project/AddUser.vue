@@ -88,7 +88,7 @@ const props = defineProps({
   },
 });
 
-const emit = defineEmits(["update:visible", 'member-created']);
+const emit = defineEmits(["update:visible", "member-created"]);
 
 const dialogVisible = computed({
   get: () => props.visible,

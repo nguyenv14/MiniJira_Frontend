@@ -1,13 +1,15 @@
+<!-- src/components/EditProjectDialog.vue -->
 <template>
   <Dialog
     v-model:visible="dialogVisible"
     :style="{ width: '70vw' }"
-    header="Create New Project"
+    header="Edit Project"
     :modal="true"
     :closable="false"
   >
     <div class="p-fluid">
       <div class="flex flex-wrap gap-4">
+        <!-- Form Fields -->
         <div class="w-full flex flex-col sm:flex-row gap-4">
           <div class="flex-grow">
             <InputComponent
@@ -46,13 +48,12 @@
           />
           <small v-if="errors.basicInfo" class="p-error">{{ errors.basicInfo }}</small>
         </div>
+
         <div class="w-full flex flex-col md:flex-row gap-4">
-          <!-- Description -->
           <div class="md:w-1/2 flex flex-col">
             <label class="block text-sm font-bold mb-1"
               >Description <span style="color: red">*</span></label
             >
-            <!-- Dùng Textarea trực tiếp -->
             <Textarea
               v-model="newProject.description"
               :class="{ 'p-invalid': errors.description }"
@@ -61,17 +62,15 @@
               class="flex-grow"
               style="width: 100%"
             />
-            <!-- Giữ lại small error -->
             <small v-if="errors.description" class="p-error">{{
               errors.description
             }}</small>
           </div>
-          <!-- Features -->
+
           <div class="md:w-1/2 flex flex-col">
             <label class="block text-sm font-bold mb-1"
               >Features <span style="color: red">*</span></label
             >
-            <!-- Dùng Textarea trực tiếp -->
             <Textarea
               v-model="newProject.features"
               :class="{ 'p-invalid': errors.features }"
@@ -80,12 +79,10 @@
               class="flex-grow"
               style="width: 100%"
             />
-            <!-- Giữ lại small error -->
             <small v-if="errors.features" class="p-error">{{ errors.features }}</small>
           </div>
         </div>
 
-        <!-- Project Type -->
         <div class="w-full sm:w-[calc(50%-0.5rem)]">
           <label class="block text-sm font-bold mb-1"
             >Project Type <span style="color: red">*</span></label
@@ -104,11 +101,9 @@
           }}</small>
         </div>
 
-        <!-- Industry -->
         <div class="w-full sm:w-[calc(50%-0.5rem)]">
           <label class="block text-sm font-bold mb-1"
-            >Industry
-            <span style="color: red"><span style="color: red">*</span></span></label
+            >Industry <span style="color: red">*</span></label
           >
           <Select
             v-model="newProject.industry"
@@ -122,7 +117,6 @@
           <small v-if="errors.industry" class="p-error">{{ errors.industry }}</small>
         </div>
 
-        <!-- Categories (Full Width) -->
         <div class="w-full">
           <label class="block text-sm font-bold mb-1"
             >Categories <span style="color: red">*</span></label
@@ -139,7 +133,6 @@
           <small v-if="errors.categories" class="p-error">{{ errors.categories }}</small>
         </div>
 
-        <!-- Color Picker với Radio Buttons -->
         <div class="w-full">
           <label class="block text-sm font-bold mb-1"
             >Color <span style="color: red">*</span></label
@@ -157,7 +150,6 @@
               ]"
               @click="newProject.color = colorOption.value"
             >
-              <!-- Hiển thị check nếu chọn -->
               <svg
                 v-if="newProject.color === colorOption.value"
                 xmlns="http://www.w3.org/2000/svg"
@@ -176,7 +168,6 @@
           <small v-if="errors.color" class="p-error">{{ errors.color }}</small>
         </div>
 
-        <!-- Start Date -->
         <div class="w-full sm:w-[calc(50%-0.5rem)]">
           <label class="block text-sm font-bold mb-1">Start Date</label>
           <Calendar
@@ -192,7 +183,6 @@
           <small v-if="errors.start_date" class="p-error">{{ errors.start_date }}</small>
         </div>
 
-        <!-- End Date -->
         <div class="w-full sm:w-[calc(50%-0.5rem)]">
           <label class="block text-sm font-bold mb-1">End Date</label>
           <Calendar
@@ -207,21 +197,6 @@
           />
           <small v-if="errors.end_date" class="p-error">{{ errors.end_date }}</small>
         </div>
-
-        <!-- Manager -->
-        <!-- <div class="w-full sm:w-[calc(50%-0.5rem)]">
-          <label class="block text-sm font-medium mb-1">Manager</label>
-          <Dropdown
-            v-model="categories"
-            :options="projectTypes"
-            option-label="name"
-            option-value="value"
-            placeholder="Select type"
-            class="w-full"
-            :show-clear="true"
-          />
-          <small v-if="errors.manager" class="p-error">{{ errors.manager }}</small>
-        </div> -->
 
         <label class="block text-sm font-bold">Tags</label>
         <div
@@ -246,6 +221,7 @@
         </div>
       </div>
     </div>
+
     <template #footer>
       <Button
         label="Cancel"
@@ -254,82 +230,42 @@
         @click="closeDialog"
       />
       <Button
-        label="Create"
+        label="Save"
         icon="pi pi-check"
         :loading="isCreating"
-        @click="createProject"
+        @click="updateProject"
       />
     </template>
   </Dialog>
 </template>
 
 <script setup lang="ts">
-import { ref, defineProps, defineEmits, computed } from "vue";
+import { ref, computed, watch } from "vue";
 import Dialog from "primevue/dialog";
 import Button from "primevue/button";
 import { useToast } from "primevue/usetoast";
 import { getApiRoutes } from "@/utils/api";
 import { BoardColor } from "@/constants/board_color";
-import InputComponent from "@/components/InputComponent.vue"; // Import InputComponent
+import InputComponent from "@/components/InputComponent.vue";
 import { ProjectType, ProjectCategory, Industry } from "@/constants/project_type";
-
-const inputValue = ref("");
-
-function addTag() {
-  const trimmed = inputValue.value.trim();
-  if (trimmed && !(newProject.value.tags as string[]).includes(trimmed)) {
-    (newProject.value.tags as string[]).push(trimmed);
-  }
-  inputValue.value = "";
-}
-
-function handleKeydown(e: KeyboardEvent) {
-  if (["Enter", " ", ","].includes(e.key)) {
-    e.preventDefault();
-    addTag();
-  }
-}
-
-function removeTag(tag: string) {
-  newProject.value.tags = newProject.value.tags.filter((t) => t !== tag);
-}
+import Textarea from "primevue/textarea";
+import Select from "primevue/select";
+import MultiSelect from "primevue/multiselect";
+import Calendar from "primevue/calendar";
 
 const props = defineProps({
-  visible: {
-    type: Boolean,
-    default: false,
-  },
-  projectTypes: {
-    type: Array,
-    default: () => [],
-  },
-  industries: {
-    type: Array,
-    default: () => [],
-  },
-  managers: {
-    type: Array,
-    default: () => [],
-  },
+  visible: Boolean,
+  project: Object,
 });
 
-const errors = ref<Record<string, string>>({
-  name: "",
-  basicInfo: "",
-  code: "",
-  description: "",
-  features: "",
-  project_type: "",
-  categories: "",
-  industry: "",
-  manager: "",
-  tags: "",
-});
-
-const emit = defineEmits(["update:visible", "project-created"]);
+const emit = defineEmits(["update:visible", "project-updated"]);
 
 const toast = useToast();
 const api = getApiRoutes();
+
+const inputValue = ref("");
+const errors = ref<Record<string, string>>({});
+const isCreating = ref(false);
 
 const dialogVisible = computed({
   get: () => props.visible,
@@ -359,8 +295,7 @@ const industryOptions = [
   { label: "E-commerce", value: Industry.ECOMMERCE },
 ];
 
-// Sắp xếp lại colorOptions để màu trắng lên đầu (nếu cần)
-const colorOptions = ref([
+const colorOptions = [
   { name: "White", value: BoardColor.WHITE },
   { name: "Blue", value: BoardColor.BLUE },
   { name: "Red", value: BoardColor.RED },
@@ -370,10 +305,8 @@ const colorOptions = ref([
   { name: "Orange", value: BoardColor.ORANGE },
   { name: "Gray", value: BoardColor.GRAY },
   { name: "Navy", value: BoardColor.NAVY },
-]);
+];
 
-// Hàm lấy mã màu (cần được định nghĩa hoặc import)
-// Giả định bạn có một hàm như thế này, nếu không hãy thay thế bằng logic của bạn
 const getColorCode = (colorValue: number) => {
   const colorMap: Record<number, string> = {
     [BoardColor.WHITE]: "#FFFFFF",
@@ -386,32 +319,34 @@ const getColorCode = (colorValue: number) => {
     [BoardColor.GRAY]: "#9E9E9E",
     [BoardColor.NAVY]: "#003087",
   };
-  return colorMap[colorValue] || "#CCCCCC"; // Mặc định nếu không tìm thấy
+  return colorMap[colorValue] || "#CCCCCC";
 };
 
-// Form data
-const newProject = ref({
-  name: "",
-  basicInfo: "",
-  code: "",
-  description: "",
-  features: "",
-  project_type: null,
-  categories: [],
-  industry: null,
-  start_date: null,
-  end_date: null,
-  tags: [],
-  manager: null,
-  color: 0,
-});
+const newProject = ref<any>({});
 
-const isCreating = ref(false);
+watch(
+  () => props.project,
+  (newVal) => {
+    if (newVal) {
+      // Deep clone project data
+      newProject.value = JSON.parse(JSON.stringify(newVal));
+      // Đảm bảo các field array luôn là array
+      if (!Array.isArray(newProject.value.categories)) {
+        newProject.value.categories = [];
+      }
+      if (!Array.isArray(newProject.value.tags)) {
+        newProject.value.tags = [];
+      }
+    } else {
+      resetForm();
+    }
+  },
+  { immediate: true }
+);
 
-// Methods
-const closeDialog = () => {
-  dialogVisible.value = false;
+const resetForm = () => {
   newProject.value = {
+    _id: "",
     name: "",
     basicInfo: "",
     code: "",
@@ -428,12 +363,57 @@ const closeDialog = () => {
   };
 };
 
-const createProject = async () => {
-  // if (!validateForm()) return;
+const closeDialog = () => {
+  dialogVisible.value = false;
+  errors.value = {};
+};
 
+const addTag = () => {
+  const trimmed = inputValue.value.trim();
+  if (trimmed && !(newProject.value.tags as string[]).includes(trimmed)) {
+    (newProject.value.tags as string[]).push(trimmed);
+  }
+  inputValue.value = "";
+};
+
+const handleKeydown = (e: KeyboardEvent) => {
+  if (["Enter", " ", ","].includes(e.key)) {
+    e.preventDefault();
+    addTag();
+  }
+};
+
+const removeTag = (tag: string) => {
+  newProject.value.tags = newProject.value.tags.filter((t: string) => t !== tag);
+};
+
+const updateProject = async () => {
   isCreating.value = true;
+  errors.value = {}; // Reset errors
+
   try {
-    const requestBody = { ...newProject.value };
+    const requestBody = {
+      _id: newProject.value._id,
+      name: newProject.value.name,
+      basicInfo: newProject.value.basicInfo,
+      code: newProject.value.code,
+      description: newProject.value.description,
+      features: newProject.value.features,
+      project_type: newProject.value.project_type,
+      categories: newProject.value.categories,
+      industry: newProject.value.industry,
+      start_date: newProject.value.start_date
+        ? new Date(newProject.value.start_date).toISOString()
+        : null,
+      end_date: newProject.value.end_date
+        ? new Date(newProject.value.end_date).toISOString()
+        : null,
+      tags: newProject.value.tags,
+      color: newProject.value.color,
+      manager: newProject.value.manager,
+    };
+
+    // Xử lý dates
     requestBody.start_date = requestBody.start_date
       ? new Date(requestBody.start_date).toISOString()
       : null;
@@ -451,19 +431,13 @@ const createProject = async () => {
       toast.add({
         severity: "success",
         summary: "Success",
-        detail: "Project created successfully!",
+        detail: "Project updated successfully!",
         life: 3000,
       });
-      emit("project-created", response.data);
+      emit("project-updated", response.data);
       closeDialog();
-    } else if (response.statusCode == 400) {
-      toast.add({
-        severity: "success",
-        summary: "Message",
-        detail: response.message,
-        life: 3000,
-      });
-    } else {
+    } else if (response.statusCode === 400) {
+      // Handle validation errors
       const fieldErrors: Record<string, string> = {};
       const messages = response.message;
       for (const key in messages) {
@@ -472,13 +446,26 @@ const createProject = async () => {
           Array.isArray(messages[key]) &&
           messages[key].length > 0
         ) {
-          fieldErrors[key] = messages[key][0]; // ✅ chỉ lấy lỗi đầu tiên của mỗi field
+          fieldErrors[key] = messages[key][0];
         }
       }
       errors.value = fieldErrors;
+    } else {
+      toast.add({
+        severity: "error",
+        summary: "Error",
+        detail: response.message || "Failed to update project",
+        life: 3000,
+      });
     }
   } catch (error) {
-    console.log("tag", "error: " + error);
+    console.error("Update error:", error);
+    toast.add({
+      severity: "error",
+      summary: "Error",
+      detail: "An unexpected error occurred",
+      life: 3000,
+    });
   } finally {
     isCreating.value = false;
   }

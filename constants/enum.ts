@@ -1,17 +1,3 @@
-export enum TaskStatus {
-  TODO = 1,
-  IN_PROGRESS = 2,
-  REVIEW = 3,
-  DONE = 4
-}
-
-export enum TaskPriority {
-  LOW = 1,
-  MEDIUM = 2,
-  HIGH = 3
-}
-
-// utils/project.enums.ts
 
 // Project Type
 export enum ProjectType {

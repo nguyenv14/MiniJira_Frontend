@@ -17,15 +17,25 @@ export const getApiRoutes = () => {
       search: `${base}/users`,
       user: (id: string | number) => `${base}/users/${id}`,
       getUserToAddProject: `${base}/users/get-user-to-add-project`,
+      getUserToProjectByAddTask: `${base}/users/get-user-to-add-task`,
     },
     project: {
       search: `${base}/projects`,
-      project: `${base}/projects/create`,
+      project: `${base}/projects/save`,
       detail: `${base}/projects/detail`,
       findByMember: `${base}/projects/get-members-by-project-id`,
       addMember: `${base}/projects/add-member`,
       removeMember: `${base}/projects/remove-member`,
       updateMemberRole: `${base}/projects/change-role-member`,
+      update: `${base}/projects/update`,
+    },
+    task: {
+      search: `${base}/tasks/search`,
+      save: `${base}/tasks/save`,
+      changeStatus: `${base}/tasks/change-status`,
+      task: (id: string | number) => `${base}/tasks/${id}`,
+      delete: (id: string | number) => `${base}/tasks/${id}`,
+      getTaskByProjectId: (projectId: string | number) => `${base}/tasks/get-tasks-by-project-id/${projectId}`,
     }
   }
 }

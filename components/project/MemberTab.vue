@@ -11,7 +11,7 @@
             placeholder="Search members by username, email..."
             class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition"
             @keyup.enter="handleSearch"
-          />
+          >
         </div>
         <!-- Action Buttons -->
         <div class="flex gap-2">
@@ -91,7 +91,7 @@
               :checked="data.role === 1"
               class="h-4 w-4 text-purple-600 focus:ring-purple-500"
               @change="updateMemberRole(data.id, 1)"
-            />
+            >
           </template>
         </Column>
 
@@ -109,7 +109,7 @@
               :checked="data.role === 2"
               class="h-4 w-4 text-blue-600 focus:ring-blue-500"
               @change="updateMemberRole(data.id, 2)"
-            />
+            >
           </template>
         </Column>
 
@@ -127,7 +127,7 @@
               :checked="data.role === 3"
               class="h-4 w-4 text-green-600 focus:ring-green-500"
               @change="updateMemberRole(data.id, 3)"
-            />
+            >
           </template>
         </Column>
 

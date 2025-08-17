@@ -1,13 +1,22 @@
+<!-- src/components/ProjectDetails.vue -->
 <template>
-  <div class="project-details-tab p-6 bg-white rounded-lg shadow-md">
+  <div class="project-details-tab p-6 bg-white rounded-lg">
     <div v-if="isLoading" class="text-center py-10">
       <i class="pi pi-spin pi-spinner text-2xl" />
       <p class="mt-2">Loading board...</p>
     </div>
     <div v-if="!isLoading && project">
-      <h2 class="text-2xl font-bold mb-6 text-gray-800">Project Details</h2>
+      <!-- Header với nút Edit -->
+      <div class="flex justify-between items-center mb-6">
+        <h2 class="text-2xl font-bold text-gray-800">Project Details</h2>
+        <Button
+          label="Edit Project"
+          icon="pi pi-pencil"
+          class="p-button-outlined"
+          @click="openEditDialog"
+        />
+      </div>
 
-      <!-- Grid layout: 2 hoặc 3 cột -->
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         <DetailItem label="Name" :value="project.name" />
         <DetailItem label="Code" :value="project.code" />
@@ -65,6 +74,14 @@
     <div v-else-if="!isLoading">
       <p class="text-gray-500">Project not found for ID: {{ projectId }}.</p>
     </div>
+
+    <!-- Edit Dialog -->
+    <EditProjectDialog
+      v-if="project"
+      v-model:visible="editDialogVisible"
+      :project="project"
+      @project-updated="handleProjectUpdated"
+    />
   </div>
 </template>
 
@@ -74,9 +91,13 @@ import { getApiRoutes } from "@/utils/api";
 import { BoardColor, getColorCode } from "@/constants/board_color";
 import { getProjectType } from "@/constants/project_type";
 import { getIndustryDescription, getProjectCategoryDescription } from "@/constants/enum";
+import Button from "primevue/button";
+import { useToast } from "primevue/usetoast";
+import EditProjectDialog from "./EditProjectDialog.vue";
 import DetailItem from "./components/DetailItem.vue";
 
 const api = getApiRoutes();
+const toast = useToast();
 
 const props = defineProps({
   projectId: {
@@ -85,7 +106,28 @@ const props = defineProps({
   },
 });
 
-// Hàm lấy tên màu
+// State cho dialog
+const editDialogVisible = ref(false);
+
+// Hàm mở dialog edit
+const openEditDialog = () => {
+  editDialogVisible.value = true;
+};
+
+// Hàm xử lý khi project được cập nhật
+const handleProjectUpdated = async () => {
+  toast.add({
+    severity: "success",
+    summary: "Success",
+    detail: "Project updated successfully!",
+    life: 3000,
+  });
+
+  // Gọi lại API để refresh dữ liệu
+  await fetchProjectDetails();
+};
+
+// Các hàm helper
 const getColorName = (color: number) => {
   const colorNames: Record<number, string> = {
     [BoardColor.WHITE]: "White",
@@ -105,7 +147,6 @@ const getCategoryNames = (categoryIds: number[]): string => {
   return categoryIds.map((id) => getProjectCategoryDescription(id)).join(", ");
 };
 
-// Hàm định dạng ngày tháng
 const formatDate = (dateString: string | Date | null | undefined): string => {
   if (!dateString) return "N/A";
   if (typeof dateString === "string" || dateString instanceof Date) {
@@ -116,31 +157,12 @@ const formatDate = (dateString: string | Date | null | undefined): string => {
 };
 
 // State
-const project = ref<{
-  name: string;
-  code: string;
-  basicInfo: string;
-  description: string;
-  features: string;
-  project_type: number;
-  industry: number;
-  categories: number[];
-  color: number;
-  start_date: string | Date;
-  end_date: string | Date;
-  actual_start_date?: string | Date | null;
-  actual_end_date?: string | Date | null;
-  tags: string[];
-  managerUser?: { username: string; email: string };
-  createdByUser?: { username: string; email: string };
-} | null>(null);
-
+const project = ref<any>(null);
 const isLoading = ref(true);
 
 const fetchProjectDetails = async () => {
   isLoading.value = true;
   try {
-    // Giả lập độ trễ mạng
     const response = await useRequest(api.project.detail, {
       method: "POST",
       body: { id: props.projectId },
@@ -148,13 +170,11 @@ const fetchProjectDetails = async () => {
 
     if (response && response.data) {
       project.value = response.data;
-      console.log("Project details fetched successfully:", project.value);
     } else {
-      console.error("Project not found or error fetching details");
       project.value = null;
     }
   } catch (error) {
-    console.error("Failed to fetch fake project details:", error);
+    console.error("Failed to fetch project details:", error);
     project.value = null;
   } finally {
     isLoading.value = false;
@@ -173,7 +193,7 @@ watch(
   () => props.projectId,
   async (newId) => {
     if (newId) {
-      project.value = null; // Reset dữ liệu cũ
+      project.value = null;
       await fetchProjectDetails();
     } else {
       isLoading.value = false;
@@ -182,7 +202,3 @@ watch(
   }
 );
 </script>
-
-<style scoped>
-/* Style tùy chỉnh nếu cần */
-</style>

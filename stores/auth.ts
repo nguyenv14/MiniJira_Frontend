@@ -7,7 +7,7 @@ export const useAuthStore = defineStore('auth', {
   state: () => ({
     accessToken: null as string | null,
     userInfo: null as {
-      id: string
+      _id: string
       username: string
       email: string
       role: number
@@ -22,14 +22,13 @@ export const useAuthStore = defineStore('auth', {
 
   actions: {
     login(token: string, userInfo: {
-      id: string
+      _id: string
       username: string
       email: string
       role: number
       isActive: boolean
       isAdmin: boolean
     }) {
-      console.log('Đăng nhập với:', { token, userInfo })
       this.accessToken = token
       this.userInfo = userInfo
       if (typeof window !== 'undefined') {

@@ -1,113 +1,152 @@
+<!-- src/pages/projects/[id].vue -->
 <template>
+  <!-- Header với Navigation -->
   <div
-    class="project-detail-page p-4"
-    :style="`background-color: ${getColorCode(project!.color ? project!.color : 1)}!important`"
+    class="project-detail-page min-h-screen"
+    :style="{ backgroundColor: getColorCode(project?.color || 0) }"
   >
-    <!-- Header Top -->
-    <div class="flex items-center mb-2 bg-white rounded-lg shadow-sm p-4">
-      <!-- Back Button -->
-      <button
-        class="flex items-center text-blue-600 hover:text-blue-800 mr-4"
-        @click="goBack"
-      >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          class="h-5 w-5 mr-1"
-          viewBox="0 0 20 20"
-          fill="currentColor"
-        >
-          <path
-            fill-rule="evenodd"
-            d="M9.707 14.707a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 1.414L6.414 10l3.293 3.293a1 1 0 010 1.414zm4.586-9.707a1 1 0 00-1.414 0l-4 4a1 1 0 000 1.414l4 4a1 1 0 001.414-1.414L11.414 10l3.293-3.293a1 1 0 000-1.414z"
-            clip-rule="evenodd"
-          />
-        </svg>
-        Back
-      </button>
+    <!-- Unified Navigation Bar -->
+    <div class="bg-white shadow-sm border-b-gray-400 border-b">
+      <div class="px-4">
+        <div class="flex items-center py-3">
+          <!-- Back Button -->
+          <button
+            class="flex items-center text-blue-600 hover:text-blue-800 mr-4"
+            @click="goBack"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-5 w-5 mr-1"
+              viewBox="0 0 20 20"
+              fill="currentColor"
+            >
+              <path
+                fill-rule="evenodd"
+                d="M9.707 14.707a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 1.414L6.414 10l3.293 3.293a1 1 0 010 1.414zm4.586-9.707a1 1 0 00-1.414 0l-4 4a1 1 0 000 1.414l4 4a1 1 0 001.414-1.414L11.414 10l3.293-3.293a1 1 0 000-1.414z"
+                clip-rule="evenodd"
+              />
+            </svg>
+            Back
+          </button>
 
-      <!-- Title -->
-      <h2 class="text-xl font-bold">Board Detail</h2>
-    </div>
+          <!-- Project Title -->
+          <h1 class="text-xl font-bold text-gray-800 mr-4">
+            {{ "Project Details" }}
+          </h1>
 
-    <!-- Tab Navigation -->
-    <div class="border-b border-gray-200">
-      <nav class="flex space-x-2 overflow-x-auto">
-        <button
-          v-for="tab in tabs"
-          :key="tab.key"
-          :class="[
-            'flex-1 px-4 py-2 font-medium text-sm rounded-t-lg focus:outline-none text-center',
-            activeTab === tab.key
-              ? 'text-blue-600 border-b-2 border-blue-600 bg-white'
-              : 'text-gray-500 hover:text-gray-700 hover:border-gray-300 bg-gray-50',
-          ]"
-          @click="activeTab = tab.key"
-        >
-          {{ tab.label }}
-        </button>
-      </nav>
-    </div>
+          <!-- Navigation Tabs -->
+          <nav class="flex space-x-6 flex-1">
+            <button
+              v-for="tab in tabs"
+              :key="tab.key"
+              :class="[
+                'py-2 px-1 font-medium text-sm focus:outline-none whitespace-nowrap border-b-2',
+                activeTab === tab.key
+                  ? 'border-blue-500 text-blue-600'
+                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300',
+              ]"
+              @click="activeTab = tab.key"
+            >
+              {{ tab.label }}
+            </button>
+          </nav>
 
-    <!-- Tab Content -->
-    <div
-      class="tab-content bg-white shadow-sm rounded-b-xl"
-      style="height: calc(100vh - 140px)"
-    >
-      <div class="h-full overflow-y-auto">
-        <!-- Tab 1: Update Project & Add Members -->
-        <div v-if="activeTab === 'details'" class="p-4">
-          <ProjectDetailsTab :project-id="projectId" />
-        </div>
-
-        <div v-else-if="activeTab === 'kanban'" class="p-4">
-          <KanbanBoard :project-id="projectId" />
-        </div>
-
-        <div v-else-if="activeTab === 'members'" class="p-4">
-          <MemberTab :project-id="projectId" />
+          <!-- Add New Task Button (chỉ hiển thị ở tab Kanban) -->
+          <Button
+            v-if="activeTab === 'kanban'"
+            severity="info"
+            class="ml-4 bg-sky-300 hover:bg-sky-400 c text-white px-4 py-2 rounded-lg text-sm font-medium flex items-center"
+            @click="openAddTaskDialog"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-4 w-4 mr-1"
+              viewBox="0 0 20 20"
+              fill="currentColor"
+            >
+              <path
+                fill-rule="evenodd"
+                d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z"
+                clip-rule="evenodd"
+              />
+            </svg>
+            Add Task
+          </Button>
         </div>
       </div>
     </div>
+
+    <!-- Tab Content -->
+    <div class="" style="height: calc(100vh - 65px); overflow-y: auto">
+      <!-- Tab 1: Project Details -->
+      <div v-if="activeTab === 'details'" class="bg-white shadow-sm h-full">
+        <ProjectDetailsTab
+          :project-id="projectId"
+          @project-updated="handleProjectUpdated"
+        />
+      </div>
+
+      <!-- Tab 2: Kanban Board -->
+      <div v-else-if="activeTab === 'kanban'" class="bg-white shadow-sm h-full">
+        <KanbanBoard
+          ref="kanbanBoardRef"
+          :project-id="projectId"
+          @task-count-change="updateTaskCount"
+          @add-task="openAddTaskDialog"
+        />
+      </div>
+
+      <!-- Tab 3: Members -->
+      <div v-else-if="activeTab === 'members'" class="bg-white shadow-sm h-full">
+        <MemberTab :project-id="projectId" />
+      </div>
+    </div>
+
+    <!-- Add Task Dialog -->
+    <AddTask
+      v-model:visible="taskDialogVisible"
+      :project-id="projectId"
+      :initial-task="null"
+      @close="closeTaskDialog"
+      @save="handleTaskSaved"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
-// Import types and composables
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import KanbanBoard from "@/components/project/KanbanBoard.vue";
 import MemberTab from "@/components/project/MemberTab.vue";
+import ProjectDetailsTab from "@/components/project/ProjectDetailsTab.vue";
+import { getApiRoutes } from "@/utils/api";
+import { useToast } from "primevue/usetoast";
+import AddTask from "@/components/project/components/AddTask.vue";
+import type { KanbanBoardInstance } from "@/schema/kanban";
 
 // Define page meta
 definePageMeta({
   layout: "empty",
 });
 
-// Interfaces
-interface Tab {
-  key: string;
-  label: string;
-}
-
 // Composables
 const route = useRoute();
 const router = useRouter();
 const api = getApiRoutes();
+const toast = useToast();
 
 // Props/Refs
 const projectId = route.params.id as string;
 const activeTab = ref<string>("details");
+const taskCount = ref<number>(0);
+const taskDialogVisible = ref<boolean>(false);
+const kanbanBoardRef = ref<KanbanBoardInstance | null>(null);
 
-const tabs = ref<Tab[]>([
+const tabs = ref([
   { key: "details", label: "Project Details" },
-  { key: "members", label: "Members" },
   { key: "kanban", label: "Kanban Board" },
+  { key: "members", label: "Members" },
 ]);
-
-// Methods
-const goBack = (): void => {
-  router.back();
-};
 
 const project = ref<{
   name: string;
@@ -126,49 +165,30 @@ const project = ref<{
   tags: string[];
   managerUser?: { username: string; email: string };
   createdByUser?: { username: string; email: string };
-} | null>({
-  name: "",
-  code: "",
-  basicInfo: "",
-  description: "",
-  features: "",
-  project_type: 0,
-  industry: 0,
-  categories: [],
-  color: 0,
-  start_date: new Date(),
-  end_date: new Date(),
-  tags: [],
-});
+} | null>(null);
 
-function getColorCode(color: number, opacity = 10): string {
-  const hex =
-    {
-      0: "#ffffff",
-      1: "#3b82f6",
-      2: "#ef4444",
-      3: "#10b981",
-      4: "#facc15",
-      5: "#8b5cf6",
-      6: "#f97316",
-      7: "#9ca3af",
-      8: "#1e3a8a",
-    }[color] || "#ffffff";
+// Methods
+const goBack = (): void => {
+  router.back();
+};
 
-  // Convert hex to rgba
-  const r = parseInt(hex.slice(1, 3), 16);
-  const g = parseInt(hex.slice(3, 5), 16);
-  const b = parseInt(hex.slice(5, 7), 16);
-
-  return `rgba(${r}, ${g}, ${b}, ${opacity})`;
+function getColorCode(color: number): string {
+  const colorMap: Record<number, string> = {
+    0: "#ffffff",
+    1: "#3b82f6", // blue
+    2: "#ef4444", // red
+    3: "#10b981", // green
+    4: "#facc15", // yellow
+    5: "#8b5cf6", // purple
+    6: "#f97316", // orange
+    7: "#9ca3af", // gray
+    8: "#1e3a8a", // navy
+  };
+  return colorMap[color] || "#3b82f6";
 }
 
-const isLoading = ref(true);
-
 const fetchProjectDetails = async () => {
-  isLoading.value = true;
   try {
-    // Giả lập độ trễ mạng
     const response = await useRequest(api.project.detail, {
       method: "POST",
       body: { id: projectId },
@@ -176,30 +196,66 @@ const fetchProjectDetails = async () => {
 
     if (response && response.data) {
       project.value = response.data;
-      console.log("Project details fetched successfully:", project.value);
-    } else {
-      console.error("Project not found or error fetching details");
-      project.value = null;
     }
   } catch (error) {
-    console.error("Failed to fetch fake project details:", error);
-    project.value = null;
-  } finally {
-    isLoading.value = false;
+    console.error("Failed to fetch project details:", error);
+  }
+};
+
+const handleProjectUpdated = () => {
+  // Refresh project details when updated
+  fetchProjectDetails();
+};
+
+const updateTaskCount = (count: number) => {
+  taskCount.value = count;
+};
+
+// Task Dialog Methods
+const openAddTaskDialog = (): void => {
+  taskDialogVisible.value = true;
+};
+
+const closeTaskDialog = (): void => {
+  taskDialogVisible.value = false;
+};
+
+const handleTaskSaved = (): void => {
+  closeTaskDialog();
+  toast.add({
+    severity: "success",
+    summary: "Success",
+    detail: "Task created successfully!",
+    life: 3000,
+  });
+  if (activeTab.value === "kanban") {
+    kanbanBoardRef.value?.fetchTasks();
   }
 };
 
 onMounted(async () => {
   if (projectId) {
     await fetchProjectDetails();
-  } else {
-    isLoading.value = false;
   }
 });
 </script>
 
 <style scoped>
-.tab-content {
-  min-height: 400px;
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #c5c5c5;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
 }
 </style>
