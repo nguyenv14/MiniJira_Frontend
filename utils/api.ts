@@ -36,6 +36,14 @@ export const getApiRoutes = () => {
       task: (id: string | number) => `${base}/tasks/${id}`,
       delete: (id: string | number) => `${base}/tasks/${id}`,
       getTaskByProjectId: (projectId: string | number) => `${base}/tasks/get-tasks-by-project-id/${projectId}`,
+      taskDetail: `${base}/tasks/detail`,
+      addChecklist: `${base}/tasks/save-checklist`,
+      changeStatusChecklist: `${base}/tasks/change-status-checklist`,
+      addComment: `${base}/tasks/add-comment`,
+    },
+    dashboard: {
+      getTask: `${base}/dashboard/get-task`,
+      getProject: `${base}/projects/get-project-by-userId`
     }
   }
 }
