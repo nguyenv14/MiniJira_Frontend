@@ -1,4 +1,4 @@
-// https://nuxt.com/docs/api/configuration/nuxt-config
+// https://nuxt.com/docs/api/configuration/nuxt-config  
 import tailwindcss from "@tailwindcss/vite";
 import Aura from "@primeuix/themes/aura";
 
@@ -39,4 +39,9 @@ export default defineNuxtConfig({
       },
     },
   },
+  // Thêm cấu hình cho plugins client-side
+  plugins: [
+    '~/plugins/apexcharts.client.ts',
+    '~/plugins/vue-good-table.client.ts'
+  ]
 });

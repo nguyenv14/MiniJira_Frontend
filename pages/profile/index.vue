@@ -43,7 +43,7 @@
         />
       </div>
     </div>
-    <DialogChangePassword  ref="changePasswordDialogRef" />
+    <DialogChangePassword ref="changePasswordDialogRef" />
   </div>
 </template>
 
@@ -113,7 +113,7 @@ const fetchUserProfile = async () => {
 const updateProfile = async () => {
   isLoading.value = true;
   try {
-    const userId = authStore.userInfo?.id as string; // Assuming userInfo has an id field
+    const userId = authStore.userInfo?._id as string; // Assuming userInfo has an id field
     if (!userId) {
       toast.add({
         severity: "error",
@@ -123,7 +123,7 @@ const updateProfile = async () => {
       });
     }
 
-    const response = await useRequest(apiRoute.profile.getProfile(userId), {
+    const response = await useRequest(apiRoute.profile.getProfile, {
       method: "POST",
       body: { userName: userNameInput.modelValue },
       auth: false,

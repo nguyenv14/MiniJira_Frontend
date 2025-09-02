@@ -45,7 +45,7 @@
                   ? 'border-blue-500 text-blue-600'
                   : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300',
               ]"
-              @click="activeTab = tab.key"
+              @click="changeTab(tab.key)"
             >
               {{ tab.label }}
             </button>
@@ -79,10 +79,18 @@
     <!-- Tab Content -->
     <div class="" style="height: calc(100vh - 65px); overflow-y: auto">
       <!-- Tab 1: Project Details -->
-      <div v-if="activeTab === 'details'" class="bg-white shadow-sm h-full">
+      <div v-if="activeTab === 'details'" class="bg-white shadow-sm h-100vh p-4">
         <ProjectDetailsTab
           :project-id="projectId"
           @project-updated="handleProjectUpdated"
+        />
+      </div>
+
+      <div v-else-if="activeTab === 'tasks'" class="bg-white shadow-sm h-full">
+        <TaskTab
+          :project-id="projectId"
+          @task-count-change="updateTaskCount"
+          @add-task="openAddTaskDialog"
         />
       </div>
 
@@ -114,7 +122,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from "vue";
+import { ref, onMounted, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import KanbanBoard from "@/components/project/KanbanBoard.vue";
 import MemberTab from "@/components/project/MemberTab.vue";
@@ -123,6 +131,7 @@ import { getApiRoutes } from "@/utils/api";
 import { useToast } from "primevue/usetoast";
 import AddTask from "@/components/project/components/AddTask.vue";
 import type { KanbanBoardInstance } from "@/schema/kanban";
+import TaskTab from "@/components/project/TaskTab.vue";
 
 // Define page meta
 definePageMeta({
@@ -137,16 +146,37 @@ const toast = useToast();
 
 // Props/Refs
 const projectId = route.params.id as string;
-const activeTab = ref<string>("details");
-const taskCount = ref<number>(0);
-const taskDialogVisible = ref<boolean>(false);
-const kanbanBoardRef = ref<KanbanBoardInstance | null>(null);
-
 const tabs = ref([
   { key: "details", label: "Project Details" },
+  { key: "tasks", label: "Tasks" },
   { key: "kanban", label: "Kanban Board" },
   { key: "members", label: "Members" },
 ]);
+// Lấy tab từ query param nếu có, mặc định là 'details'
+const activeTab = ref<string>(
+  route.query.tab && typeof route.query.tab === "string" ? route.query.tab : "details"
+);
+const taskCount = ref<number>(0);
+const taskDialogVisible = ref<boolean>(false);
+const kanbanBoardRef = ref<KanbanBoardInstance | null>(null);
+// Đổi tab và cập nhật query param
+function changeTab(tabKey: string) {
+  if (activeTab.value === tabKey) return;
+  activeTab.value = tabKey;
+  router.replace({
+    query: { ...route.query, tab: tabKey },
+  });
+}
+
+// Khi query param tab thay đổi (ví dụ: back/forward trình duyệt), cập nhật activeTab
+watch(
+  () => route.query.tab,
+  (newTab) => {
+    if (typeof newTab === "string" && newTab !== activeTab.value) {
+      activeTab.value = newTab;
+    }
+  }
+);
 
 const project = ref<{
   name: string;
@@ -236,6 +266,9 @@ const handleTaskSaved = (): void => {
 onMounted(async () => {
   if (projectId) {
     await fetchProjectDetails();
+  }
+  if (!tabs.value.some((t) => t.key === activeTab.value)) {
+    changeTab(tabs.value[0].key);
   }
 });
 </script>

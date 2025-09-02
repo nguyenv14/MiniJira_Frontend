@@ -80,7 +80,12 @@
             v-tooltip="'Change UI'"
             icon="pi pi-sliders-h"
             class="p-button-rounded p-button-text"
+            :class="{
+              'my-tasks-active': isGroupedByUser,
+              'p-button-outlined': !isGroupedByUser,
+            }"
             severity="secondary"
+            @click="toggleGroupedByUser"
           />
         </div>
       </div>
@@ -113,7 +118,74 @@
       <p class="mt-2">{{ error }}</p>
     </div>
     <div v-else class="overflow-y-auto h-[calc(100vh-220px)] px-2">
-      <div class="flex overflow-x-auto gap-4 pb-4">
+      <div v-if="isGroupedByUser" class="space-y-4">
+        <!-- Group by User View -->
+        <div
+          v-for="(group, userId) in tasksGroupedByUser"
+          :key="userId"
+          class="bg-white rounded-lg shadow-sm border border-gray-200 mt-2"
+        >
+          <!-- User Header with Dropdown -->
+          <div
+            class="flex items-center justify-between p-3 cursor-pointer hover:bg-gray-50"
+            @click="toggleUserExpansion(userId)"
+          >
+            <div class="flex items-center space-x-3">
+              <div
+                class="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white text-sm font-medium"
+              >
+                {{ group.user ? group.user.username?.slice(0, 2).toUpperCase() : "??" }}
+              </div>
+              <div>
+                <div class="font-medium text-gray-900">
+                  {{ group.user ? group.user.username : "Unassigned" }}
+                </div>
+                <div class="text-sm text-gray-500">{{ group.tasks.length }} tasks</div>
+              </div>
+            </div>
+            <i
+              :class="[
+                'pi transition-transform duration-200',
+                isUserExpanded(userId) ? 'pi-chevron-down' : 'pi-chevron-right',
+              ]"
+            />
+          </div>
+
+          <!-- User Tasks -->
+          <div v-show="isUserExpanded(userId)" class="border-t border-gray-200">
+            <div class="flex overflow-x-auto gap-4 p-3">
+              <div
+                v-for="column in visibleColumns"
+                :key="`${userId}-${column.id}`"
+                class="bg-gray-100 rounded-b-common flex flex-col flex-shrink-0"
+                :class="[column.color || 'bg-gray-100', getColumnWidthClass()]"
+              >
+                <div
+                  class="p-2 space-y-2 flex-1 transition-colors duration-200 min-h-[50px]"
+                  :class="{
+                    'bg-blue-50 bg-opacity-50':
+                      isDraggingOver && dragOverColumnId == column.id,
+                  }"
+                  @dragover.prevent="onDragOver(column.id)"
+                  @dragleave="onDragLeave"
+                  @drop="onDrop(column.id)"
+                >
+                  <KanbanTask
+                    v-for="task in group.tasks.filter((t) => t.status == column.id)"
+                    :key="task._id"
+                    :task="task"
+                    @dragstart="onDragStart(task)"
+                    @edit="onEditTask"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Normal Kanban View -->
+      <div v-else class="flex overflow-x-auto gap-4 pb-4">
         <div
           v-for="column in visibleColumns"
           :key="column.id"
@@ -244,6 +316,8 @@ const taskDialogVisible = ref<boolean>(false);
 const editingTask = ref<TaskSave | null>(null);
 const isMyTasksFilterActive = ref<boolean>(true);
 const isBurningTasksFilterActive = ref<boolean>(false);
+const isGroupedByUser = ref<boolean>(false);
+const expandedUsers = ref<Record<string, boolean>>({});
 
 // Drag & Drop state
 const draggedTask = ref<TaskDetail | null>(null);
@@ -261,6 +335,33 @@ const getTasksByStatus = (status: number): TaskDetail[] => {
 
 const getTaskCountByStatus = (status: number): number => {
   return filteredTasks.value.filter((task) => task.status == status).length;
+};
+
+const tasksGroupedByUser = computed(() => {
+  const grouped: Record<string, { user: User | null; tasks: TaskDetail[] }> = {};
+
+  // Nhóm tasks theo assignee
+  filteredTasks.value.forEach((task) => {
+    const assigneeId = task.assignee || "unassigned";
+    if (!grouped[assigneeId]) {
+      const user = projectMembers.value.find((u) => u._id === assigneeId) || null;
+      grouped[assigneeId] = {
+        user: user,
+        tasks: [],
+      };
+    }
+    grouped[assigneeId].tasks.push(task);
+  });
+
+  return grouped;
+});
+
+const toggleUserExpansion = (userId: string) => {
+  expandedUsers.value[userId] = !expandedUsers.value[userId];
+};
+
+const isUserExpanded = (userId: string) => {
+  return expandedUsers.value[userId] !== false; // Mặc định là expanded
 };
 
 // Methods
@@ -370,6 +471,18 @@ const toggleMyTasksFilter = () => {
 
 const toggleBurningTasksFilter = () => {
   isBurningTasksFilterActive.value = !isBurningTasksFilterActive.value;
+  applyFilters();
+};
+
+const toggleGroupedByUser = () => {
+  isGroupedByUser.value = !isGroupedByUser.value;
+
+  // Khởi tạo expanded state cho tất cả users khi bật chế độ grouping
+  if (isGroupedByUser.value) {
+    Object.keys(tasksGroupedByUser.value).forEach((userId) => {
+      expandedUsers.value[userId] = true; // Mặc định mở rộng tất cả
+    });
+  }
   applyFilters();
 };
 
