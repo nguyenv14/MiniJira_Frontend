@@ -347,33 +347,6 @@
         <p>No checklists yet. Click "Add Checklist" to create one.</p>
       </div>
     </div>
-    <!-- <div v-else class="flex items-center justify-center h-full">
-      <div class="text-center max-w-80 mx-auto">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="64"
-          height="64"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="1.5"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          class="text-slate-400 mx-auto mb-6"
-        >
-          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-          <polyline points="14 2 14 8 20 8" />
-          <line x1="16" y1="13" x2="8" y2="13" />
-          <line x1="16" y1="17" x2="8" y2="17" />
-          <polyline points="10 9 9 9 8 9" />
-        </svg>
-        <h2 class="text-xl font-bold text-slate-800 mb-2">No Task Selected</h2>
-        <p class="text-slate-500 leading-relaxed">
-          Select a task from the list or create a new one to get started
-        </p>
-      </div>
-    </div> -->
-
     <!-- Add this section after the checklists section -->
     <div
       v-if="selectedTask"
@@ -443,6 +416,13 @@
       </div>
     </div>
   </div>
+  <EditTaskDialog
+    v-if="showEditDialog && selectedTask"
+    :task="selectedTask!"
+    :project-id="selectedTask.project_id"
+    @close="showEditDialog = false"
+    @save="handleTaskUpdated"
+  />
 </template>
 
 <script lang="ts" setup>
@@ -452,20 +432,27 @@ import {
   TaskPriority,
   TaskStatus,
 } from "@/constants/project_type";
-import type { TaskChecklist, TaskComment, TaskDetail } from "@/schema/kanban";
+import type { TaskChecklist, TaskDetail } from "@/schema/kanban";
+import EditTaskDialog from "./components/EditTaskDialog.vue";
 
 const api = getApiRoutes();
 const props = defineProps<{
   taskId: string;
 }>();
-
+// const {
+//   users: projectUsers,
+//   loading: loadingUsers,
+//   fetchUsersForProject,
+// } = useProjectUsers();
+const showEditDialog = ref(false);
 const selectedTask = ref<TaskDetail>();
 const showAddChecklistInput = ref(false);
 const newChecklistTitle = ref("");
 // Add these refs with your other refs
-const comments = ref<TaskComment[]>([]);
 const newComment = ref("");
-
+const editTask = async () => {
+  showEditDialog.value = true;
+};
 const addComment = async () => {
   if (!newComment.value.trim()) return;
   console.log("Adding comment:", newComment.value);
@@ -538,6 +525,11 @@ const addChecklist = async () => {
   } catch (error) {
     console.error("Failed to add checklist:", error);
   }
+};
+
+const handleTaskUpdated = (updatedTask: TaskDetail) => {
+  Object.assign(selectedTask.value!, updatedTask);
+  fetchTaskDetail();
 };
 
 const toggleChecklist = async (checklistId: string) => {

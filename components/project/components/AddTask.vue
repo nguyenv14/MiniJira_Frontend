@@ -252,6 +252,8 @@ const localTaskForm = reactive<TaskDetail>({
   completed_at: undefined,
   parent_task_id: "",
   is_subtask: false,
+  checklists: [],
+  comments: []
 });
 
 const fileInput = ref<HTMLInputElement | null>(null);
